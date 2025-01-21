@@ -35,7 +35,7 @@ function Profiles() {
           <Avatar
             alt="Remy Sharp"
             src="/src/assets/maomao.png"
-            sx={{ width: 34, height: 34 }}
+            sx={{ width: 36, height: 36 }}
           />
         </IconButton>
       </Tooltip>
