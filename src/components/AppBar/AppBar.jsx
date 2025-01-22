@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import ModeSelect from '~/components/ModeSelect'
+import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
@@ -50,13 +50,8 @@ function AppBar() {
           <Templates />
           <Button
             sx={{
-              color: 'white',
-              border: 'none',
-              '&:hover': {
-                border: 'none'
-              }
+              color: 'white'
             }}
-            variant="outlined"
             startIcon={<LibraryAddIcon />}
           >
             Create
