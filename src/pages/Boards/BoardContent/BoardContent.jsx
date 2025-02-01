@@ -181,17 +181,20 @@ function BoardContent({ board }) {
 
   const collisionDetectionStrategy = useCallback((args) => {
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
-      return closestCorners(args)
+      return closestCorners({ ...args })
     }
 
     const pointerIntersections = pointerWithin(args)
-    const intersections = !!pointerIntersections?.length ? pointerIntersections : rectIntersection(args)
-    let overId = getFirstCollision(intersections, 'id')
+
+    if (!pointerIntersections?.length) return
+
+    // const intersections = !!pointerIntersections?.length ? pointerIntersections : rectIntersection(args)
+    let overId = getFirstCollision(pointerIntersections, 'id')
 
     if (overId) {
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if (checkColumn) {
-        overId = closestCenter({
+        overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container => container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id))
         })[0]?.id
