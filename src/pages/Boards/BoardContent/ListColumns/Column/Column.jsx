@@ -23,6 +23,7 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { toast } from 'react-toastify'
 
 function Column({ column }) {
 
@@ -56,7 +57,10 @@ function Column({ column }) {
 
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
-    if (!newCardTitle) return
+    if (!newCardTitle) {
+      toast.error('Please enter card title', { position: 'bottom-right' })
+      return
+    }
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -197,6 +201,7 @@ function Column({ column }) {
                   size='small'
                   variant="outlined"
                   autoFocus
+                  data-no-dnd="true"
                   value={newCardTitle}
                   onChange={(e) => setNewCardTitle(e.target.value)}
                   sx={{
