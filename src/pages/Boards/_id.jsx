@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react'
+import { Box } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-import { fetchBoardDetailAPI, createNewColumnAPI, createNewCardAPI } from '~/apis'
+import {
+  fetchBoardDetailAPI,
+  createNewColumnAPI,
+  createNewCardAPI,
+  updateBoardDetailAPI,
+  updateColumnDetailAPI
+} from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
+import { mapOrder } from '~/utils/sorts'
 
 function Board() {
   const [board, setBoard] = useState(null)
@@ -14,10 +24,15 @@ function Board() {
     const boeardId = '67a723a732097956604f1eb3'
 
     fetchBoardDetailAPI(boeardId).then(board => {
+      board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
+
       board.columns.forEach(column => {
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        }
+        else {
+          column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
       setBoard(board)
@@ -61,6 +76,37 @@ function Board() {
     newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnsIds
     setBoard(newBoard)
+
+    updateBoardDetailAPI(newBoard._id, { columnOrderIds: dndOrderedColumnsIds })
+  }
+
+  const moveCardInTheSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
+    const newBoard = { ...board }
+
+    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards
+      columnToUpdate.cardOrderIds = dndOrderedCardIds
+    }
+    setBoard(newBoard)
+
+    // updateColumnDetailAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+  }
+
+  if (!board) {
+    return (
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        width: '100nw',
+        height: '100vh'
+      }}>
+        <CircularProgress />
+        <Typography>Loading...</Typography>
+      </Box>
+    )
   }
 
   return (
@@ -72,6 +118,7 @@ function Board() {
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}
+        moveCardInTheSameColumn={moveCardInTheSameColumn}
       />
     </Container>
   )
