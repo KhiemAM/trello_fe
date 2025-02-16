@@ -1,11 +1,9 @@
 import { useEffect } from 'react'
-import { Box } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import {
   updateBoardDetailAPI,
   updateColumnDetailAPI,
@@ -81,19 +79,7 @@ function Board() {
   }
 
   if (!board) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        width: '100nw',
-        height: '100vh'
-      }}>
-        <CircularProgress />
-        <Typography>Loading...</Typography>
-      </Box>
-    )
+    return <PageLoadingSpinner caption='Loading Board...'/>
   }
 
   return (
