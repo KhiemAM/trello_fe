@@ -18,7 +18,7 @@ function AccountVerification() {
     return <Navigate to='/404'/>
   }
 
-  if (verified) {
+  if (!verified) {
     return <PageLoadingSpinner caption='verifying your account...'/>
   }
 
