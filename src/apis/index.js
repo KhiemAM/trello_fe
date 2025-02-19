@@ -57,3 +57,8 @@ export const refreshTokenAPI = async (data) => {
   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`, data)
   return response.data
 }
+
+export const fetchBoardsAPI = async (searchPath) => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards${searchPath}`)
+  return response.data
+}
