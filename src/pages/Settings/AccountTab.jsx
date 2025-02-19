@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE, singleFileValidator } from '~/utils/validator'
 import { toast } from 'react-toastify'
@@ -30,6 +30,7 @@ const VisuallyHiddenInput = styled('input')({
 })
 
 function AccountTab() {
+  const dispatch = useDispatch()
   const currentUser = useSelector(selectCurrentUser)
   const initialGeneralForm = {
     displayName: currentUser?.displayName
@@ -41,6 +42,14 @@ function AccountTab() {
   const submitChangeGeneralInformation = (data) => {
     const { displayName } = data
     if (displayName === currentUser?.displayName) return
+    toast.promise(
+      dispatch(updateUserAPI({ displayName })),
+      { pending: 'Update...' }
+    ).then((res) => {
+      if (!res.error) {
+        toast.success('Update successfully')
+      }
+    })
   }
 
   const uploadAvatar = (e) => {
@@ -53,9 +62,19 @@ function AccountTab() {
     let reqData = new FormData()
     reqData.append('avatar', e.target.files[0])
 
-    for (const value of reqData.values()) {
-      console.log(value)
-    }
+    // for (const value of reqData.values()) {
+    //   console.log(value)
+    // }
+    toast.promise(
+      dispatch(updateUserAPI(reqData)),
+      { pending: 'Update...' }
+    ).then((res) => {
+      if (!res.error) {
+        toast.success('Update successfully')
+      }
+
+      e.target.value = ''
+    })
   }
 
   return (

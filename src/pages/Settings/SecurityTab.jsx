@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useDispatch } from 'react-redux'
+import { updateUserAPI, logoutUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validator'
 import Box from '@mui/material/Box'
@@ -13,9 +13,10 @@ import LockIcon from '@mui/icons-material/Lock'
 import LockResetIcon from '@mui/icons-material/LockReset'
 import { useConfirm } from 'material-ui-confirm'
 import LogoutIcon from '@mui/icons-material/Logout'
+import { toast } from 'react-toastify'
 
 function SecurityTab() {
-  const currentUser = useSelector(selectCurrentUser)
+  const dispatch = useDispatch()
 
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
 
@@ -30,7 +31,16 @@ function SecurityTab() {
       confirmationText: 'Confirm',
       cancellationText: 'Cancel'
     }).then(() => {
-      const { current_password, new_password, new_password_confirmation } = data
+      const { current_password, new_password } = data
+      toast.promise(
+        dispatch(updateUserAPI({ current_password, new_password })),
+        { pending: 'Update...' }
+      ).then((res) => {
+        if (!res.error) {
+          toast.success('Successfully changed your password, plesae login again')
+          dispatch(logoutUserAPI(false))
+        }
+      })
     }).catch(() => {})
   }
 
