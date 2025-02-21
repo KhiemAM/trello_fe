@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
@@ -16,18 +15,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1
-})
+import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 
 function AccountTab() {
   const dispatch = useDispatch()

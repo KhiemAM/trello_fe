@@ -5,12 +5,11 @@ import VpnLockIcon from '@mui/icons-material/VpnLock'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import BoltIcon from '@mui/icons-material/Bolt'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import { Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatters'
+import BoardUserGroup from './BoardUserGroup'
 
 const MENU_STYLES = {
   color: 'white',
@@ -88,33 +87,8 @@ function BoardBar({ board }) {
         >
           Invite
         </Button>
-        <AvatarGroup
-          max={4}
-          sx={{
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              fontSize: '16px',
-              border: 'none'
-            }
-          }}
-        >
-          <Tooltip title="Mao Mao Avatar">
-            <Avatar alt="Avatar" src="/src/assets/maomao.png" />
-          </Tooltip>
-          <Tooltip title="Mao Mao Avatar">
-            <Avatar alt="Avatar" src="/src/assets/maomao.png" />
-          </Tooltip>
-          <Tooltip title="Mao Mao Avatar">
-            <Avatar alt="Avatar" src="/src/assets/maomao.png" />
-          </Tooltip>
-          <Tooltip title="Mao Mao Avatar">
-            <Avatar alt="Avatar" src="/src/assets/maomao.png" />
-          </Tooltip>
-          <Tooltip title="Mao Mao Avatar">
-            <Avatar alt="Avatar" src="/src/assets/maomao.png" />
-          </Tooltip>
-        </AvatarGroup>
+
+        <BoardUserGroup />
       </Box>
     </Box>
   )
