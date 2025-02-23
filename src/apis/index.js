@@ -18,6 +18,17 @@ export const moveCardToDifferentColumnAPI = async (updateData) => {
   return response.data
 }
 
+export const fetchBoardsAPI = async (searchPath) => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards${searchPath}`)
+  return response.data
+}
+
+export const createNewBoardAPI = async (data) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
+  toast.success('Board created successfully!')
+  return response.data
+}
+
 //API Column
 export const createNewColumnAPI = async (newColumnData) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/columns`, newColumnData)
@@ -40,6 +51,11 @@ export const createNewCardAPI = async (newCardData) => {
   return response.data
 }
 
+export const updateCardDetailsAPI = async (cardId, updateData) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/cards/${cardId}`, updateData)
+  return response.data
+}
+
 //API User
 export const registerUserAPI = async (data) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/register`, data)
@@ -55,16 +71,5 @@ export const verifyUserAPI = async (data) => {
 
 export const refreshTokenAPI = async (data) => {
   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`, data)
-  return response.data
-}
-
-export const fetchBoardsAPI = async (searchPath) => {
-  const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards${searchPath}`)
-  return response.data
-}
-
-export const createNewBoardAPI = async (data) => {
-  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
-  toast.success('Board created successfully!')
   return response.data
 }

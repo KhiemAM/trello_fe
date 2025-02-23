@@ -32,6 +32,14 @@ import { toast } from 'react-toastify'
 import CardUserGroup from './CardUserGroup'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
 import CardActivitySection from './CardActivitySection'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  clearCurrentActiveCard,
+  selectCurrentActiveCard,
+  updateCurrentActiveCard
+} from '~/redux/activeCard/activeCardSlice'
+import { updateCardDetailsAPI } from '~/apis'
+import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 
 
 import { styled } from '@mui/material/styles'
@@ -59,19 +67,34 @@ const SidebarItem = styled(Box)(({ theme }) => ({
  * Note: Modal là một low-component mà bọn MUI sử dụng bên trong những thứ như Dialog, Drawer, Menu, Popover. Ở đây dĩ nhiên chúng ta có thể sử dụng Dialog cũng không thành vấn đề gì, nhưng sẽ sử dụng Modal để dễ linh hoạt tùy biến giao diện từ con số 0 cho phù hợp với mọi nhu cầu nhé.
  */
 function ActiveCard() {
-  const [isOpen, setIsOpen] = useState(true)
-  const handleOpenModal = () => setIsOpen(true)
+  const dispatch = useDispatch()
+  const activeCard = useSelector(selectCurrentActiveCard)
+  // const [isOpen, setIsOpen] = useState(true)
+  // const handleOpenModal = () => setIsOpen(true)
   const handleCloseModal = () => {
-    setIsOpen(false)
+    // setIsOpen(false)
+    dispatch(clearCurrentActiveCard())
+  }
+
+  //function dùng chung này sẽ gọi API để cập nhật thông tin của card
+  const callApiUpdateCard = async (updateData) => {
+    const updatedCard = await updateCardDetailsAPI(activeCard._id, updateData)
+
+    dispatch(updateCurrentActiveCard(updatedCard))
+    dispatch(updateCardInBoard(updatedCard))
+
+    return updatedCard
   }
 
   const onUpdateCardTitle = (newTitle) => {
-    console.log(newTitle.trim())
-    // Gọi API...
+    callApiUpdateCard({ title: newTitle.trim() })
+  }
+
+  const onUpdateCardDescription = (newDescription) => {
+    callApiUpdateCard({ description: newDescription })
   }
 
   const onUploadCardCover = (event) => {
-    console.log(event.target?.files[0])
     const error = singleFileValidator(event.target?.files[0])
     if (error) {
       toast.error(error)
@@ -81,12 +104,16 @@ function ActiveCard() {
     reqData.append('cardCover', event.target?.files[0])
 
     // Gọi API...
+    toast.promise(
+      callApiUpdateCard(reqData).finally(() => event.target.value = ''),
+      { pending: 'Updating...' }
+    )
   }
 
   return (
     <Modal
       disableScrollLock
-      open={isOpen}
+      open={true}
       onClose={handleCloseModal} // Sử dụng onClose trong trường hợp muốn đóng Modal bằng nút ESC hoặc click ra ngoài Modal
       sx={{ overflowY: 'auto' }}>
       <Box sx={{
@@ -111,13 +138,15 @@ function ActiveCard() {
           <CancelIcon color="error" sx={{ '&:hover': { color: 'error.light' } }} onClick={handleCloseModal} />
         </Box>
 
-        <Box sx={{ mb: 4 }}>
-          <img
-            style={{ width: '100%', height: '320px', borderRadius: '6px', objectFit: 'cover' }}
-            src="https://trungquandev.com/wp-content/uploads/2023/08/fit-banner-for-facebook-blog-trungquandev-codetq.png"
-            alt="card-cover"
-          />
-        </Box>
+        {activeCard?.cover &&
+          <Box sx={{ mb: 4 }}>
+            <img
+              style={{ width: '100%', height: '320px', borderRadius: '6px', objectFit: 'cover' }}
+              src={activeCard?.cover}
+              alt="card-cover"
+            />
+          </Box>
+        }
 
         <Box sx={{ mb: 1, mt: -3, pr: 2.5, display: 'flex', alignItems: 'center', gap: 1 }}>
           <CreditCardIcon />
@@ -125,7 +154,7 @@ function ActiveCard() {
           {/* Feature 01: Xử lý tiêu đề của Card */}
           <ToggleFocusInput
             inputFontSize='22px'
-            value={'card?.title'}
+            value={activeCard?.title}
             onChangedValue={onUpdateCardTitle} />
         </Box>
 
@@ -146,7 +175,10 @@ function ActiveCard() {
               </Box>
 
               {/* Feature 03: Xử lý mô tả của Card */}
-              <CardDescriptionMdEditor />
+              <CardDescriptionMdEditor
+                cardDescriptionProp={activeCard?.description}
+                handleUpdateCardDescription={onUpdateCardDescription}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>
